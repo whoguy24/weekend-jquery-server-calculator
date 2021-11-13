@@ -13,8 +13,6 @@ app.listen(port, function() {
     console.log(`Server is now running on port ${port}.`);
 });
 
-// SERVER LOGIC
-
 // Set global variables
 let history = [];
 
@@ -25,7 +23,8 @@ app.get('/calculate', (req, res) => {
 
 // POST request
 app.post('/calculate', (req, res) => {
-    history.push(calculate(req.body));
+    let calculationObject = calculate(req.body);
+    history.push(calculationObject);
     res.sendStatus(201);
 })
 

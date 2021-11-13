@@ -3,7 +3,6 @@ $(document).ready(onReady);
 
 // Define global variables
 let operationType = '';
-let result = '';
 let history = [];
 
 // Run function on page load
@@ -71,19 +70,26 @@ function renderHistory() {
         url: '/calculate'
     }).then((response) => {
 
+        // Clear history variable
+        history = [];
+
         // Clear list element
         $('#list-history').empty();
 
         // Construct list element from history objects.
         // Construct operation strings from history data.
         for (let historyObject of response) {
+            history.push(historyObject)
             let listItemString = calculationObjectString(historyObject);
             $('#list-history').append(`<li>${listItemString}</li>`);
         }
 
+        // Update header calculation result with most recent result
+        $('#header-result').text(history[history.length-1].result);
+
         // Log GET success to the console
         console.log('Successfully retrieved history from the server.');
-        
+
     }).catch((error) => {
 
         // Log GET failure to the console
@@ -115,15 +121,11 @@ function postCalculation() {
         url: '/calculate',
         data: calculation
     }).then((response) => {
-        console.log('Successfully posted to the server:');
-        console.log(calculationObjectString(calculation));
-
+        console.log('Successfully created object on the server:');
+        renderHistory();
     }).catch((error) => {
         console.log('Post to server failed.');
     })
-
-    // Render list element in the DOM
-    renderHistory();
 
 }
 
