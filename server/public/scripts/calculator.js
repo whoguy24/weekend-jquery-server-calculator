@@ -14,7 +14,7 @@ function onReady () {
     $('#button-subtract').on('click', setOperation);
     $('#button-multiply').on('click', setOperation);
     $('#button-divide').on('click', setOperation);
-    $('#button-submit').on('click', calculate);
+    $('#button-submit').on('click', postCalculation);
     $('#button-clear').on('click', clearInputs);
     renderHistory()
 }
@@ -104,12 +104,10 @@ function retrieveInputs() {
 }
 
 // Calculate the desired operation
-function calculate() {
+function postCalculation() {
 
     // Retrieve inputs and build calculation object
     let calculation = retrieveInputs();
-
-    console.log(calculation);
 
     // Post calculation object to the server
     $.ajax({
@@ -118,11 +116,14 @@ function calculate() {
         data: calculation
     }).then((response) => {
         console.log('Successfully posted to the server:');
-        console.log(calculation);
+        console.log(calculationObjectString(calculation));
 
     }).catch((error) => {
         console.log('Post to server failed.');
     })
+
+    // Render list element in the DOM
+    renderHistory();
 
 }
 

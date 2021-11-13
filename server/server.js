@@ -3,50 +3,57 @@ const express = require('express');
 
 // CREATE SERVER
 const app = express();
-const PORT = 5000;
+const port = 5000;
 app.use(express.static('./server/public'));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
 // START SERVER
-app.listen(PORT, function() {
-    console.log(`Server is now running on port ${PORT}.`);
+app.listen(port, function() {
+    console.log(`Server is now running on port ${port}.`);
 });
 
 // SERVER LOGIC
 
-let history = [
-    {
-        int1: '1',
-        int2: '2',
-        result: '3',
-        operation: '+'
-    },
-    {
-        int1: '14',
-        int2: '9',
-        result: '5',
-        operation: '-'
-    },
-    {
-        int1: '2',
-        int2: '6',
-        result: '12',
-        operation: '*'
-    },
-    {
-        int1: '14',
-        int2: '2',
-        result: '7',
-        operation: '/'
-    }
-];
+// Set global variables
+let history = [];
 
+// GET request
 app.get('/calculate', (req, res) => {
     res.send(history);
 });
 
+// POST request
 app.post('/calculate', (req, res) => {
-    history.push(req.body);
+    history.push(calculate(req.body));
     res.sendStatus(201);
 })
+
+// Function to calculate actual arithmetic from calculation object
+function calculate (calculationObject) {
+
+    // Determine calculationObject operation type.
+    // Perform appropriate operation using data from calculationObject.
+    if (calculationObject.operation === '+') {
+        calculationObject.result = Number(calculationObject.int1) + Number(calculationObject.int2);
+        return calculationObject;
+    }
+    else if (calculationObject.operation === '-') {
+        calculationObject.result = Number(calculationObject.int1) - Number(calculationObject.int2);
+        return calculationObject;
+    }
+    else if (calculationObject.operation === '*') {
+        calculationObject.result = Number(calculationObject.int1) * Number(calculationObject.int2);
+        return calculationObject;
+    }
+    else if (calculationObject.operation === '/') {
+        calculationObject.result = Number(calculationObject.int1) / Number(calculationObject.int2);
+        Math.round(calculationObject.result * 100) / 100;
+        return calculationObject;
+    }
+    else {
+        console.log(`Could not calculate from object. Please ensure your calculationObject has a valid "operation" property.`);
+        return false;
+    }
+
+}
